@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RPG Pocket v1.1</title>
-    <!-- Bibliotecas de Ícones Gratuitas (Font Awesome & RPG Awesome) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rpg-awesome/0.2.0/css/rpg-awesome.min.css">
     
@@ -116,14 +115,14 @@
         .shop-item-info { font-size: 12px; }
         .shop-item-info div { font-size: 10px; color: #aaa; }
 
-        /* Ranking de Destaque */
-        .ranking-badge { font-size: 48px; font-weight: bold; color: #ffcc66; text-shadow: 0 0 12px rgba(255,204,102,0.6); margin: 15px 0; font-family: 'Georgia', serif; }
+        /* Ranking e Ícone de Morte Destaque */
+        .ranking-badge { font-size: 48px; font-weight: bold; color: #ffcc66; text-shadow: 0 0 12px rgba(255,204,102,0.6); margin: 10px 0; font-family: 'Georgia', serif; }
+        .death-icon-container { font-size: 56px; color: #cc2222; text-shadow: 0 0 15px rgba(204, 34, 34, 0.6); margin: 15px 0; }
     </style>
 </head>
 <body>
 
 <div id="game-layout">
-    <!-- TELA INICIAL: CRIAÇÃO DE PERSONAGEM -->
     <div id="screen-start" class="screen active game-card">
         <h1>RPG Pocket v1.1</h1>
         <hr>
@@ -158,7 +157,6 @@
         </div>
     </div>
 
-    <!-- TELA PRINCIPAL DE JOGO -->
     <div id="screen-main" class="screen game-card">
         <div class="status-indicator-bar" id="ui-situation-bar">
             <i class="fa-solid fa-compass animate-pulse"></i> <span id="ui-situation-text">Explorando os Corredores...</span>
@@ -166,7 +164,6 @@
 
         <h2>Turno <span id="ui-turn">1</span> / 30</h2>
         
-        <!-- Bloco de Status Alinhado e Harmônico -->
         <div class="stats-grid">
             <div class="stat-box">
                 <span class="hero-title-area" id="ui-name">Herói</span><br>
@@ -184,7 +181,6 @@
             <div class="stat-box" style="text-align: right;">
                 <strong style="color: #b2a4b7; text-transform: uppercase; font-size: 10px;">Inventário</strong><br><br>
                 <span class="large-stat-text" style="display:block; margin-bottom: 6px;">💰 <span id="ui-gold">40</span>g</span>
-                <!-- Poções separadas verticalmente (H em cima, M embaixo) -->
                 <div class="inventory-potions-list large-stat-text">
                     <div>🧪 H: <span id="ui-pot-hp">1</span></div>
                     <div><i class="ra ra-potion" style="color: #4444ff;"></i> M: <span id="ui-pot-mp">1</span></div>
@@ -197,7 +193,6 @@
         <hr>
 
         <div id="action-panel">
-            <!-- Exploração -->
             <div id="panel-explore">
                 <p style="color:#ffcc66; font-size:12px; margin: 0 0 5px 0; text-align: center; font-weight: bold;">🔀 Escolha seu próximo passo:</p>
                 <button class="choice-btn" id="choice-1" onclick="selectPath(1)">Opção 1</button>
@@ -210,7 +205,6 @@
                 </div>
             </div>
             
-            <!-- Combate -->
             <div id="panel-combat" style="display:none;">
                 <div class="combat-arena">
                     <div class="combat-row">
@@ -236,7 +230,6 @@
         <div id="log">A jornada se inicia nas sombras.</div>
     </div>
 
-    <!-- TELA EXCLUSIVA DA LOJA -->
     <div id="screen-shop" class="screen game-card">
         <h1>🏪 Mercador Itinerante</h1>
         <hr>
@@ -281,9 +274,13 @@
         <button onclick="closeShop()" style="width:100%; background:linear-gradient(to bottom, #3b3b3b, #222); border-color:#555; color:#fff;"><i class="fa-solid fa-circle-arrow-left"></i> Voltar à Masmorra</button>
     </div>
 
-    <!-- TELA FINAL -->
     <div id="screen-end" class="screen game-card" style="text-align:center;">
-        <h1>Fim de Jogo</h1>
+        <h1 id="end-title">Fim de Jogo</h1>
+        
+        <div id="ui-death-icon-slot" class="death-icon-container" style="display:none;">
+            <i class="ra ra-skull"></i>
+        </div>
+
         <p id="end-message" style="font-size: 14px; line-height: 1.5; color:#b2a4b7;"></p>
         
         <div style="font-size: 14px; font-weight:bold; color:#ffcc66; text-transform:uppercase;">Rank da Aventura</div>
@@ -354,7 +351,6 @@
         if(className === 'knight') document.getElementById('opt-knight').classList.add('selected');
         if(className === 'mage') document.getElementById('opt-mage').classList.add('selected');
         if(className === 'thief') document.getElementById('opt-thief').classList.add('selected');
-        updateUI();
     }
 
     function startGame() {
@@ -385,6 +381,7 @@
     }
 
     function generateChoices() {
+        if (player.hp <= 0) return;
         function buildPhrase() {
             return `${locais[Math.floor(Math.random() * locais.length)]} ${acoes[Math.floor(Math.random() * acoes.length)]}, ${perigos[Math.floor(Math.random() * perigos.length)]}`;
         }
@@ -396,6 +393,7 @@
     }
 
     function selectPath(optionNumber) {
+        if (player.hp <= 0) return;
         if (turn >= 30) { endGame(true); return; }
         turn++;
 
@@ -407,7 +405,7 @@
 
         let roll = Math.floor(Math.random() * 100) + 1;
 
-        if (roll <= 45) {
+        if (roll <= 45) { 
             let goldFound = Math.floor(Math.random() * 8) + 6;
             if(player.class === 'thief') goldFound = goldFound + Math.ceil(goldFound * 0.05);
 
@@ -458,7 +456,7 @@
     }
 
     function combatAction(type) {
-        if (!inCombat) return;
+        if (!inCombat || player.hp <= 0) return;
 
         if (type === 'flee') {
             if (enemy.isBoss) {
@@ -480,7 +478,7 @@
                 generateChoices(); updateUI(); return;
             } else {
                 player.hp -= 3; logMessage("💥 Falha ao fugir! Levou 3 de dano direto nas costas.");
-                if (checkGameOver()) return;
+                if (checkGameOver()) return; 
             }
         }
 
@@ -527,23 +525,33 @@
             return;
         }
 
-        // Contra-ataque Inimigo
-        if (Math.random() > 0.85) { logMessage(`O inimigo falhou no contra-ataque.`); } 
-        else {
+        // Ataque do inimigo
+        if (Math.random() > 0.85) { 
+            logMessage(`O inimigo falhou no contra-ataque.`); 
+        } else {
             let enemyDmg = enemy.isBoss ? (Math.floor(Math.random() * 6) + 12) : (Math.floor(Math.random() * 4) + 6);
             let finalDmg = Math.max(1, enemyDmg - player.baseDef);
             player.hp -= finalDmg;
             logMessage(`${enemy.name} atacou: causou ${finalDmg} de dano.`);
         }
-        checkGameOver(); updateUI();
+        
+        // Verifica a morte IMEDIATAMENTE após receber dano
+        if (checkGameOver()) return; 
+        updateUI();
     }
 
+    // DISJUNTOR DA MORTE ABSOLUTA
     function checkGameOver() {
         if (player.hp <= 0) { 
             player.hp = 0; 
-            inCombat = false;
-            enemy = null;
-            updateUI();
+            inCombat = false; 
+            enemy = null;     
+            
+            // Oculta os painéis de interação instantaneamente
+            document.getElementById("panel-explore").style.display = "none";
+            document.getElementById("panel-combat").style.display = "none";
+            
+            // Transição direta para a tela final sem exceções
             endGame(false); 
             return true; 
         }
@@ -551,6 +559,7 @@
     }
 
     function usePotion(type) {
+        if (player.hp <= 0) return;
         if (type === 'hp') {
             if (player.potHp > 0) {
                 player.hp = Math.min(player.maxHp, player.hp + 15); player.potHp--; stats.potionsUsed++;
@@ -566,7 +575,7 @@
     }
 
     function openShop() {
-        if (inCombat) return;
+        if (inCombat || player.hp <= 0) return;
         document.getElementById("shop-ui-gold").innerText = `${player.gold}g`;
         document.getElementById("shop-ui-pothp").innerText = player.potHp;
         document.getElementById("shop-ui-potmp").innerText = player.potMp;
@@ -585,6 +594,7 @@
     function closeShop() { changeScreen("screen-main"); updateUI(); }
 
     function buyItem(itemType) {
+        if (player.hp <= 0) return;
         if (itemType === 'pot_hp' && player.gold >= 19) {
             player.gold -= 19; stats.goldSpent += 19; player.potHp++;
         } else if (itemType === 'pot_mp') {
@@ -629,6 +639,8 @@
     }
 
     function updateUI() {
+        if (player.hp <= 0) return; // Trava a atualização normal se a tela final já foi chamada
+
         document.getElementById("ui-turn").innerText = turn;
         document.getElementById("ui-name").innerText = player.name;
         
@@ -642,10 +654,12 @@
         document.getElementById("ui-pot-mp").innerText = player.potMp;
 
         document.getElementById("txt-hp").innerText = `${player.hp}/${player.maxHp}`;
-        document.getElementById("bar-hp").style.width = `${Math.max(0, (player.hp / player.maxHp) * 100)}%`;
+        let percentHp = (player.hp / player.maxHp) * 100;
+        document.getElementById("bar-hp").style.width = `${Math.max(0, percentHp)}%`;
 
         document.getElementById("txt-mp").innerText = `${player.mp}/${player.maxMp}`;
-        document.getElementById("bar-mp").style.width = `${Math.max(0, (player.mp / player.maxMp) * 100)}%`;
+        let percentMp = (player.mp / player.maxMp) * 100;
+        document.getElementById("bar-mp").style.width = `${Math.max(0, percentMp)}%`;
 
         if (inCombat && enemy) {
             document.getElementById("panel-explore").style.display = "none";
@@ -670,15 +684,17 @@
     }
 
     function endGame(victory) {
-        document.getElementById("bottom-merchant").style.display = "none";
         changeScreen("screen-end");
-        
+        const deathIconSlot = document.getElementById("ui-death-icon-slot");
+
         if (victory) {
             document.getElementById("end-title").innerText = "🎉 VITÓRIA! 🎉";
             document.getElementById("end-message").innerText = `Incrível! ${player.name} completou os 30 turnos e escapou com vida da masmorra do RPG Pocket v1.1!`;
+            deathIconSlot.style.display = "none";
         } else {
             document.getElementById("end-title").innerText = "💀 GAME OVER 💀";
-            document.getElementById("end-message").innerText = `${player.name} pereceu na escuridão eterna do labirinto no turno ${turn}.`;
+            document.getElementById("end-message").innerHTML = `<strong>O herói ${player.name} caiu bravamente em combate no turno ${turn}!</strong><br>A masmorra coletou seus vestígios.`;
+            deathIconSlot.style.display = "block";
         }
 
         let score = player.gold * 2; 
