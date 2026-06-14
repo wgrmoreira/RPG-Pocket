@@ -172,7 +172,7 @@
                     <path fill="currentColor" d="M7,1 h2 v2 h2 v2 h2 v1 h-10 v-1 h2 v-2 h2 v-2 z M6,6 h4 v3 h-4 z M4,9 h8 v6 h-8 z M13,2 h1 v12 h-1 z M12,4 h3 v1 h-3 z"/>
                 </svg>
                 <div class="class-details">
-                    <strong>MAGO</strong><br>Alquimista.<br>Mana por 8g
+                    <strong>MAGO</strong><br>Alquimista.<br>Mana por 12g
                 </div>
             </div>
             <!-- Ladrão Pixel Art -->
@@ -181,7 +181,7 @@
                     <path fill="currentColor" d="M5,3 h6 v4 h-1 v1 h-4 v-1 h-1 v-4 z M6,5 h1 v1 h-1 z M9,5 h1 v1 h-1 z M4,8 h8 v7 h-8 z M12,9 h1 v4 h-1 z M11,10 h3 v1 h-3 z" fill-rule="evenodd"/>
                 </svg>
                 <div class="class-details">
-                    <strong>LADRÃO</strong><br>Sortudo.<br>+5% de ouro
+                    <strong>LADRÃO</strong><br>Sortudo.<br>+8% de ouro
                 </div>
             </div>
         </div>
@@ -194,7 +194,7 @@
     <!-- TELA PRINCIPAL DE JOGO -->
     <div id="screen-main" class="screen game-card">
         <div class="status-indicator-bar" id="ui-situation-bar">
-            <i class="ra ra-compass animate-pulse"></i> <span id="ui-situation-text">EXPLORANDO...</span>
+            <i class="ra ra-compass"></i> <span id="ui-situation-text">EXPLORANDO...</span>
         </div>
 
         <h2>TURNO <span id="ui-turn">1</span> / 30</h2>
@@ -297,14 +297,14 @@
                     <strong>ESPADA AÇO</strong>
                     <div>+2 ATK (+1 SEGUNDA)</div>
                 </div>
-                <button id="btn-shop-weapon" onclick="buyItem('weapon')">72G</button>
+                <button id="btn-shop-weapon" onclick="buyItem('weapon')">79G</button>
             </div>
             <div class="shop-item-card">
                 <div class="shop-item-info">
                     <strong>ARMADURA</strong>
                     <div>+2 DEF (+1 SEGUNDA)</div>
                 </div>
-                <button id="btn-shop-armor" onclick="buyItem('armor')">72G</button>
+                <button id="btn-shop-armor" onclick="buyItem('armor')">79G</button>
             </div>
         </div>
 
@@ -444,7 +444,7 @@
 
         if (roll <= 45) { 
             let goldFound = Math.floor(Math.random() * 8) + 6;
-            if(player.class === 'thief') goldFound = goldFound + Math.ceil(goldFound * 0.05);
+            if(player.class === 'thief') goldFound = goldFound + Math.ceil(goldFound * 0.08);
 
             document.getElementById("scene-description").innerText = achadosPaz[Math.floor(Math.random() * achadosPaz.length)];
             logMessage(`ÁREA SEGURA. COLETADO +${goldFound}G.`);
@@ -467,29 +467,37 @@
         setSituation("fight", "LUTANDO PELA VIDA!");
 
         if (forceDragon) {
-            enemy = { name: "DRAGÃO ANCIÃO", hp: 99, maxHp: 99, isBoss: true, defChance: 40, icon: "ra-dragon", type: "dragon" };
-            document.getElementById("scene-description").innerText = "O TETO DESABA EM PEDAÇOS FLAMEJANTES. O LENDÁRIO DRAGÃO ANCIÃO (99 HP) SURGIU! NÃO HÁ ESCAPATÓRIA!";
+            enemy = { name: "DRAGÃO ANCIÃO", hp: 80, maxHp: 80, isBoss: true, defChance: 40, icon: "ra-dragon", type: "dragon" };
+            document.getElementById("scene-description").innerText = `O TETO DESABA EM PEDAÇOS FLAMEJANTES. O LENDÁRIO DRAGÃO ANCIÃO (${enemy.hp} HP) SURGIU! NÃO HÁ ESCAPATÓRIA!`;
             logMessage(`AVISO: O DRAGÃO BLOQUEIA A SAÍDA!`);
             return;
         }
 
         if (isBoss) {
-            enemy = { name: "BALROG", hp: 63, maxHp: 63, isBoss: true, defChance: 35, icon: "ra-demon", type: "balrog" };
-            document.getElementById("scene-description").innerText = "UM CALOR INFERNAL TOMA CONTA. UM IMPONENTE BALROG (63 HP) BARRA SUA FUGA COM CHICOTES DE FOGO!";
-            logMessage(`AVISO: UM BALROG EMERGE!`);
+            if (turn >= 10) {
+                enemy = { name: "BALROG", hp: 56, maxHp: 56, isBoss: true, defChance: 35, icon: "ra-demon", type: "balrog" };
+                document.getElementById("scene-description").innerText = `UM CALOR INFERNAL TOMA CONTA. UM IMPONENTE BALROG (${enemy.hp} HP) BARRA SUA FUGA COM CHICOTES DE FOGO!`;
+                logMessage(`AVISO: UM BALROG EMERGE!`);
+            } else {
+                createCommonEnemy();
+            }
         } else {
-            const pool = [
-                { name: "GOBLIN", hp: 25, icon: "ra-goblin" },
-                { name: "ARANHA", hp: 25, icon: "ra-spider-face" },
-                { name: "ESQUELETO", hp: 31, icon: "ra-skeleton" },
-                { name: "ORC", hp: 38, icon: "ra-orc-head" },
-                { name: "TROLL", hp: 44, icon: "ra-troll" }
-            ];
-            let picked = pool[Math.floor(Math.random() * pool.length)];
-            enemy = { name: picked.name, hp: picked.hp, maxHp: picked.hp, isBoss: false, defChance: 20, icon: picked.icon, type: "common" };
-            document.getElementById("scene-description").innerText = `UM ROSNADO FEROZ CORTA O SILÊNCIO. UM ${picked.name} SURGIU PARA BLOQUEAR SEUS PASSOS!`;
-            logMessage(`COMBATE INICIADO: ${picked.name}.`);
+            createCommonEnemy();
         }
+    }
+
+    function createCommonEnemy() {
+        const pool = [
+            { name: "GOBLIN", hp: 25, icon: "ra-goblin" },
+            { name: "ARANHA", hp: 25, icon: "ra-spider-face" },
+            { name: "ESQUELETO", hp: 31, icon: "ra-skeleton" },
+            { name: "ORC", hp: 38, icon: "ra-orc-head" },
+            { name: "TROLL", hp: 44, icon: "ra-troll" }
+        ];
+        let picked = pool[Math.floor(Math.random() * pool.length)];
+        enemy = { name: picked.name, hp: picked.hp, maxHp: picked.hp, isBoss: false, defChance: 20, icon: picked.icon, type: "common" };
+        document.getElementById("scene-description").innerText = `UM ROSNADO FEROZ CORTA O SILÊNCIO. UM ${picked.name} SURGIU PARA BLOQUEAR SEUS PASSOS!`;
+        logMessage(`COMBATE INICIADO: ${picked.name}.`);
     }
 
     function combatAction(type) {
@@ -562,7 +570,7 @@
             return;
         }
 
-        // Ataque do inimigo
+        // Contra-ataque do inimigo
         if (Math.random() > 0.85) { 
             logMessage(`O INIMIGO FALHOU NO CONTRA-ATAQUE.`); 
         } else {
@@ -572,12 +580,11 @@
             logMessage(`${enemy.name} ATACOU: CAUSOU ${finalDmg} DANO.`);
         }
         
-        // Verifica a morte imediatamente
         if (checkGameOver()) return; 
         updateUI();
     }
 
-    // DISJUNTOR DE MORTE: INTERROMPE TUDO
+    // DISJUNTOR DE MORTE
     function checkGameOver() {
         if (player.hp <= 0) { 
             player.hp = 0; 
@@ -618,10 +625,10 @@
         document.getElementById("shop-ui-pothp").innerText = player.potHp;
         document.getElementById("shop-ui-potmp").innerText = player.potMp;
         
-        let potMpPrice = player.class === 'mage' ? 8 : 15;
+        let potMpPrice = player.class === 'mage' ? 12 : 15;
         document.getElementById("btn-shop-potmp").innerText = `${potMpPrice}G`;
-        document.getElementById("btn-shop-armor").innerText = player.armorBought === 0 ? "72G" : "96G";
-        document.getElementById("btn-shop-weapon").innerText = player.weaponBought === 0 ? "72G" : "96G";
+        document.getElementById("btn-shop-armor").innerText = player.armorBought === 0 ? "79G" : "106G";
+        document.getElementById("btn-shop-weapon").innerText = player.weaponBought === 0 ? "79G" : "106G";
 
         if(player.armorBought >= 2) document.getElementById("btn-shop-armor").disabled = true;
         if(player.weaponBought >= 2) document.getElementById("btn-shop-weapon").disabled = true;
@@ -636,17 +643,17 @@
         if (itemType === 'pot_hp' && player.gold >= 15) {
             player.gold -= 15; stats.goldSpent += 15; player.potHp++;
         } else if (itemType === 'pot_mp') {
-            let price = player.class === 'mage' ? 8 : 15;
+            let price = player.class === 'mage' ? 12 : 15;
             if(player.gold >= price) { player.gold -= price; stats.goldSpent += price; player.potMp++; }
         } else if (itemType === 'armor') {
-            let price = player.armorBought === 0 ? 72 : 96;
+            let price = player.armorBought === 0 ? 79 : 106;
             if(player.gold >= price && player.armorBought < 2) {
                 player.gold -= price; stats.goldSpent += price; player.armorBought++;
                 player.baseDef = player.armorBought === 1 ? 2 : 3;
                 player.commonItemsCount++;
             }
         } else if (itemType === 'weapon') {
-            let price = player.weaponBought === 0 ? 72 : 96;
+            let price = player.weaponBought === 0 ? 79 : 106;
             if(player.gold >= price && player.weaponBought < 2) {
                 player.gold -= price; stats.goldSpent += price; player.weaponBought++;
                 player.baseAtk += player.weaponBought === 1 ? 2 : 1;
@@ -677,7 +684,7 @@
     }
 
     function updateUI() {
-        if (player.hp <= 0) return; // Segurança Absoluta
+        if (player.hp <= 0) return;
 
         document.getElementById("ui-turn").innerText = turn;
         document.getElementById("ui-name").innerText = player.name;
