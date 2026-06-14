@@ -3,23 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPG Pocket v1.1</title>
+    <title>RPG Pocket v1.1 - 8-Bits Edition</title>
+    <!-- Bibliotecas de Ícones Gratuitas (Font Awesome & RPG Awesome) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rpg-awesome/0.2.0/css/rpg-awesome.min.css">
+    <!-- Fonte 8-bits Clássica -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     
     <style>
+        :root {
+            /* Paleta Oficial do Gameboy Clássico */
+            --gb-darkest: #0f380f;
+            --gb-dark: #306230;
+            --gb-light: #8bac0f;
+            --gb-lightest: #9bbc0f;
+        }
+
+        * {
+            font-family: 'Press Start 2P', monospace;
+            box-sizing: border-box;
+        }
+
         body {
-            background-color: #120f14;
-            color: #e2d9e5;
-            font-family: 'Courier New', Courier, monospace;
+            background-color: #2b2b2b;
+            color: var(--gb-darkest);
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
             margin: 0;
             padding: 10px;
-            box-sizing: border-box;
         }
+
         #game-layout {
             display: flex;
             flex-direction: column;
@@ -28,269 +43,294 @@
             gap: 12px;
             position: relative;
         }
+
+        /* O Formato Físico do Aparelho Gameboy */
         .game-card {
-            background: linear-gradient(135deg, #2a1e2d 0%, #17111a 100%);
-            border: 3px solid #8d7755;
-            border-radius: 12px;
+            background: var(--gb-lightest);
+            border: 4px solid var(--gb-darkest);
+            border-radius: 12px 12px 40px 12px; /* Curva do Gameboy original */
             padding: 16px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.9);
-            box-sizing: border-box;
+            box-shadow: inset -4px -4px 0px rgba(0,0,0,0.15), 0 8px 24px rgba(0,0,0,0.9);
         }
+
         .screen { display: none; }
         .active { display: block; }
         
-        h1, h2, h3 { text-align: center; color: #ffcc66; margin-top: 0; text-transform: uppercase; font-size: 22px; letter-spacing: 1px; }
-        hr { border: 0; height: 2px; background: linear-gradient(to right, transparent, #8d7755, transparent); margin: 15px 0; }
+        h1 { text-align: center; color: var(--gb-darkest); margin-top: 0; font-size: 16px; line-height: 1.5; text-shadow: 2px 2px 0px var(--gb-light); }
+        h2, h3 { text-align: center; color: var(--gb-darkest); margin-top: 0; font-size: 10px; line-height: 1.5; }
+        hr { border: 0; height: 4px; background: var(--gb-darkest); margin: 15px 0; }
         
-        /* Indicador de Situação Atual */
-        .status-indicator-bar { display: flex; justify-content: center; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #3d2b40; font-size: 14px; color: #ffcc66; }
-        .status-indicator-bar span { font-weight: bold; }
+        /* Indicador de Situação */
+        .status-indicator-bar { display: flex; justify-content: center; align-items: center; gap: 10px; background: var(--gb-light); padding: 8px; border: 4px solid var(--gb-darkest); margin-bottom: 10px; font-size: 8px; color: var(--gb-darkest); }
+        .status-indicator-bar i { font-size: 12px; }
 
-        /* Bloco de Atributos Redesenhado e Harmônico */
+        /* Bloco de Atributos */
         .stats-grid { 
             display: grid; 
             grid-template-columns: 1.2fr 0.9fr 0.9fr; 
-            background: rgba(0, 0, 0, 0.5); 
+            background: var(--gb-light); 
             padding: 12px; 
-            border-radius: 8px; 
-            border: 1px solid #423246; 
-            gap: 10px;
+            border: 4px solid var(--gb-darkest); 
+            gap: 8px;
             align-items: center;
         }
-        .stat-box { font-size: 13px; line-height: 1.4; }
-        .hero-title-area { font-size: 18px; font-weight: bold; color: #ffcc66; text-shadow: 1px 1px 4px #000; }
-        .class-tag { font-size: 10px; color: #b2a4b7; text-transform: uppercase; background: #3d2744; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 2px; }
-        .large-stat-text { font-size: 14px; font-weight: bold; }
+        .stat-box { font-size: 8px; line-height: 1.6; }
+        .hero-title-area { font-size: 10px; color: var(--gb-darkest); }
+        .class-tag { font-size: 6px; color: var(--gb-lightest); background: var(--gb-darkest); padding: 4px; display: inline-block; margin-top: 4px; }
+        .large-stat-text { font-size: 8px; }
         
-        /* Alinhamento empilhado das poções no Inventário */
         .inventory-potions-list { display: flex; flex-direction: column; gap: 4px; margin-top: 5px; }
 
-        /* Seleção de Classes */
+        /* Seleção de Classes (Estilo Menu Retro) */
         .class-select-container { display: flex; flex-direction: column; gap: 8px; margin: 15px 0; }
-        .class-option { display: flex; align-items: center; gap: 12px; background: #221724; border: 2px solid #4f3d54; padding: 10px; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.2s; }
-        .class-option:hover { border-color: #8d7755; background: #2d1f30; }
-        .class-option.selected { border-color: #ffcc66; background: #3a253e; box-shadow: 0 0 8px rgba(255,204,102,0.4); }
-        .class-option i { font-size: 24px; color: #ffcc66; width: 30px; text-align: center; }
-        .class-details { font-size: 11px; color: #b2a4b7; }
-        .class-details strong { color: #fff; }
+        .class-option { display: flex; align-items: center; gap: 12px; background: var(--gb-light); border: 4px solid var(--gb-dark); padding: 10px; cursor: pointer; text-align: left; }
+        .class-option:hover { background: var(--gb-dark); color: var(--gb-lightest); }
+        .class-option.selected { background: var(--gb-darkest); border-color: var(--gb-darkest); color: var(--gb-lightest); }
+        
+        /* Ajuste de ícones e textos para a inversão de cores */
+        .class-option i, .class-option svg { font-size: 24px; width: 30px; text-align: center; }
+        .class-details { font-size: 8px; line-height: 1.6; }
+        .class-details strong { font-size: 10px; }
 
-        /* Barras de RPG Degradê Forte à Esquerda */
-        .bar-container { background: #1a141c; border: 2px solid #8d7755; border-radius: 10px; height: 14px; width: 100%; margin: 3px 0 6px 0; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.6); }
-        .bar-fill { height: 100%; width: 100%; transition: width 0.3s ease; }
-        .bar-hp { background: linear-gradient(to right, #ff4444 0%, #ff1111 30%, #440000 100%); }
-        .bar-mp { background: linear-gradient(to right, #4488ff 0%, #1144ff 30%, #000044 100%); }
-        .bar-enemy { background: linear-gradient(to right, #44ff44 0%, #11aa11 30%, #003300 100%); }
+        /* Barras de RPG Pixeladas (Sem Degradê, Apenas Blocos) */
+        .bar-container { background: var(--gb-light); border: 2px solid var(--gb-darkest); height: 12px; width: 100%; margin: 4px 0 8px 0; }
+        .bar-fill { height: 100%; width: 100%; transition: width 0.3s steps(10); } /* Transição engasgada proposital */
+        .bar-hp { background: var(--gb-darkest); }
+        .bar-mp { background: var(--gb-dark); }
+        .bar-enemy { background: var(--gb-darkest); }
 
-        /* Arena de Batalha */
-        .combat-arena { background: rgba(15, 10, 16, 0.8); border: 3px solid #cc2222; border-radius: 8px; padding: 12px; margin: 12px 0; font-size: 13px; box-shadow: 0 0 10px rgba(204, 34, 34, 0.4); }
-        .combat-row { display: flex; justify-content: space-between; align-items: center; }
+        /* Arena de Batalha Pixelada */
+        .combat-arena { background: var(--gb-light); border: 4px dashed var(--gb-darkest); padding: 12px; margin: 12px 0; font-size: 8px; }
+        .combat-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
         
-        /* Botões */
-        button { background: linear-gradient(to bottom, #523b2b, #332318); color: #ffcc66; border: 2px solid #7c6249; padding: 12px; cursor: pointer; font-family: inherit; font-weight: bold; margin: 4px 2px; border-radius: 6px; font-size: 13px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
-        button:hover { background: linear-gradient(to bottom, #6d503b, #443122); color: #fff; }
-        button:disabled { background: #1a171c !important; color: #554458 !important; border-color: #2c2730 !important; cursor: not-allowed; box-shadow: none; }
+        /* Botões 8-Bits Estilo Tijolo */
+        button { 
+            background: var(--gb-darkest); color: var(--gb-lightest); 
+            border: 4px solid var(--gb-darkest); padding: 12px; cursor: pointer; 
+            font-size: 8px; text-transform: uppercase; margin: 4px 2px; 
+            box-shadow: inset -4px -4px 0px var(--gb-dark); transition: transform 0.1s;
+        }
+        button:active { box-shadow: inset 4px 4px 0px #000; transform: translateY(2px); }
+        button:disabled { background: var(--gb-dark) !important; color: var(--gb-light) !important; border-color: var(--gb-dark) !important; box-shadow: none; cursor: not-allowed; transform: none; }
         
-        .btn-atk { background: linear-gradient(to bottom, #5a2727, #3a1515); border-color: #833838; }
-        .btn-atk:hover { background: linear-gradient(to bottom, #753333, #4b1b1b); }
-        .btn-mag { background: linear-gradient(to bottom, #5a441b, #3d2c10); border-color: #876527; }
-        .btn-mag:hover { background: linear-gradient(to bottom, #735724, #503a15); }
-        .btn-flee { background: linear-gradient(to bottom, #422838, #2b1724); border-color: #683e59; }
-        .btn-flee:hover { background: linear-gradient(to bottom, #57354a, #3a1f30); }
-        
-        /* Linha de Ações Inferiores Compartilhada */
+        /* Botões de Ação Mesma Linha */
         .explore-actions-row { display: flex; gap: 4px; justify-content: space-between; margin-top: 10px; width: 100%; }
-        .explore-actions-row button { margin: 0; padding: 10px 4px; font-size: 11px; white-space: nowrap; flex: 1; }
-        .btn-shop-inline { background: linear-gradient(to bottom, #3a5336, #21331e); border-color: #55774d; color: #8eff9b; }
-        .btn-shop-inline:hover { background: linear-gradient(to bottom, #4a6b45, #2b4427); }
+        .explore-actions-row button { margin: 0; padding: 10px 4px; font-size: 7px; flex: 1; text-align: center; }
 
-        button.choice-btn { display: block; width: 100%; text-align: left; background: linear-gradient(to bottom, #2b212f, #1e1622); border-color: #4f3d54; white-space: normal; word-wrap: break-word; margin: 8px 0; font-size: 12px; padding: 12px; color: #d0c2d6; }
-        button.choice-btn:hover { background: linear-gradient(to bottom, #392b3f, #271d2c); border-color: #72587a; color: #fff; }
-        input[type="text"] { background: #1a141c; color: #fff; border: 2px solid #8d7755; padding: 12px; font-family: inherit; text-align: center; width: 85%; border-radius: 6px; }
+        button.choice-btn { width: 100%; text-align: left; background: var(--gb-light); color: var(--gb-darkest); box-shadow: 4px 4px 0px var(--gb-dark); line-height: 1.6; margin: 10px 0; }
+        button.choice-btn:active { box-shadow: 0px 0px 0px transparent; transform: translate(4px, 4px); }
         
-        #log { background: #0c090d; border: 1px solid #332737; height: 100px; overflow-y: auto; padding: 10px; font-size: 12px; color: #b2a4b7; margin-top: 10px; border-radius: 6px; }
+        input[type="text"] { background: var(--gb-light); color: var(--gb-darkest); border: 4px solid var(--gb-darkest); padding: 14px; font-size: 10px; text-align: center; width: 90%; text-transform: uppercase; }
+        input::placeholder { color: var(--gb-dark); }
         
-        /* Tela de Loja Separada */
-        .shop-header-status { display: flex; justify-content: space-around; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px; font-size: 12px; border: 1px solid #3a2c3d; margin-bottom: 15px; }
-        .shop-item-card { background: rgba(0,0,0,0.2); border: 1px solid #443547; padding: 10px; border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .shop-item-info { font-size: 12px; }
-        .shop-item-info div { font-size: 10px; color: #aaa; }
+        /* Log 8-bits */
+        #log { background: var(--gb-light); border: 4px solid var(--gb-darkest); height: 110px; overflow-y: auto; padding: 10px; font-size: 8px; line-height: 1.6; margin-top: 10px; }
+        
+        /* Tela de Loja Clássica */
+        .shop-header-status { display: flex; justify-content: space-around; background: var(--gb-light); padding: 10px; font-size: 8px; border: 4px solid var(--gb-darkest); margin-bottom: 15px; }
+        .shop-item-card { background: var(--gb-light); border: 4px solid var(--gb-darkest); padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .shop-item-info { font-size: 8px; line-height: 1.6; }
+        .shop-item-info div { font-size: 6px; color: var(--gb-dark); margin-top: 4px; }
+        .shop-item-card button { padding: 10px; font-size: 8px; }
 
-        /* Ranking e Ícone de Morte Destaque */
-        .ranking-badge { font-size: 48px; font-weight: bold; color: #ffcc66; text-shadow: 0 0 12px rgba(255,204,102,0.6); margin: 10px 0; font-family: 'Georgia', serif; }
-        .death-icon-container { font-size: 56px; color: #cc2222; text-shadow: 0 0 15px rgba(204, 34, 34, 0.6); margin: 15px 0; }
+        /* Elementos de Destaque Final */
+        .ranking-badge { font-size: 32px; color: var(--gb-darkest); text-shadow: 3px 3px 0px var(--gb-light); margin: 15px 0; }
+        .death-icon-container { font-size: 42px; color: var(--gb-darkest); margin: 15px 0; }
+        .stats-summary { background: var(--gb-light); border: 4px solid var(--gb-darkest); text-align: left; padding: 12px; margin: 15px auto; font-size: 8px; line-height: 2; }
+        .stats-summary div { display: flex; justify-content: space-between; border-bottom: 2px dashed var(--gb-dark); padding: 6px 0; }
+        .credits { text-align: center; color: var(--gb-dark); font-size: 8px; margin-top: 25px; }
+        
+        /* Substitutos visuais pra centralizar ícones */
+        .icon-lg { font-size: 12px; }
     </style>
 </head>
 <body>
 
 <div id="game-layout">
-    <div id="screen-start" class="screen active game-card">
-        <h1>RPG Pocket v1.1</h1>
+    <!-- TELA INICIAL: GAMEBOY STYLE 8-BITS -->
+    <div id="screen-start" class="screen active game-card gameboy-theme">
+        <h1>RPG POCKET<br>v1.1</h1>
         <hr>
         <div style="text-align:center;">
-            <input type="text" id="player-name-input" placeholder="Nome do Herói" maxlength="15">
+            <input type="text" id="player-name-input" placeholder="NOME DO HERÓI" maxlength="12">
         </div>
-        <p style="text-align:center; font-size:12px; color: #b2a4b7; margin-top: 15px;">Escolha sua Classe:</p>
+        <p class="gb-text-label" style="text-align:center;">ESCOLHA A CLASSE:</p>
         
         <div class="class-select-container">
+            <!-- Cavaleiro Pixel Art via SVG Puro -->
             <div class="class-option selected" id="opt-knight" onclick="selectClass('knight')">
-                <i class="ra ra-sword"></i>
+                <svg viewBox="0 0 16 16" width="35" height="35" shape-rendering="crispEdges">
+                    <path fill="currentColor" d="M6,2 h4 v1 h2 v4 h-1 v2 h-6 v-2 h-1 v-4 h2 v-1 z M5,5 h6 v1 h-6 z M4,9 h8 v6 h-8 z M13,3 h1 v8 h-1 z M12,9 h3 v1 h-3 z" fill-rule="evenodd"/>
+                </svg>
                 <div class="class-details">
-                    <strong>Cavaleiro</strong><br>Força bruta. Inicia com +1 ponto de Ataque.
+                    <strong>CAVALEIRO</strong><br>Força bruta.<br>Ataque +1
                 </div>
             </div>
+            <!-- Mago Pixel Art -->
             <div class="class-option" id="opt-mage" onclick="selectClass('mage')">
-                <i class="ra ra-crystal-wand"></i>
+                <svg viewBox="0 0 16 16" width="35" height="35" shape-rendering="crispEdges">
+                    <path fill="currentColor" d="M7,1 h2 v2 h2 v2 h2 v1 h-10 v-1 h2 v-2 h2 v-2 z M6,6 h4 v3 h-4 z M4,9 h8 v6 h-8 z M13,2 h1 v12 h-1 z M12,4 h3 v1 h-3 z"/>
+                </svg>
                 <div class="class-details">
-                    <strong>Mago</strong><br>Alquimista. Poção de Mana custa apenas 10g na loja.
+                    <strong>MAGO</strong><br>Alquimista.<br>Mana por 8g
                 </div>
             </div>
+            <!-- Ladrão Pixel Art -->
             <div class="class-option" id="opt-thief" onclick="selectClass('thief')">
-                <i class="ra ra-plain-dagger"></i>
+                <svg viewBox="0 0 16 16" width="35" height="35" shape-rendering="crispEdges">
+                    <path fill="currentColor" d="M5,3 h6 v4 h-1 v1 h-4 v-1 h-1 v-4 z M6,5 h1 v1 h-1 z M9,5 h1 v1 h-1 z M4,8 h8 v7 h-8 z M12,9 h1 v4 h-1 z M11,10 h3 v1 h-3 z" fill-rule="evenodd"/>
+                </svg>
                 <div class="class-details">
-                    <strong>Ladrão</strong><br>Sortudo. Ganha +5% de ouro em explorações legítimas.
+                    <strong>LADRÃO</strong><br>Sortudo.<br>+5% de ouro
                 </div>
             </div>
         </div>
         
         <div style="text-align:center;">
-            <button onclick="startGame()" style="width: 90%;">Iniciar a Aventura</button>
+            <button class="gb-btn" onclick="startGame()">INICIAR AVENTURA</button>
         </div>
     </div>
 
+    <!-- TELA PRINCIPAL DE JOGO -->
     <div id="screen-main" class="screen game-card">
         <div class="status-indicator-bar" id="ui-situation-bar">
-            <i class="fa-solid fa-compass animate-pulse"></i> <span id="ui-situation-text">Explorando os Corredores...</span>
+            <i class="ra ra-compass animate-pulse"></i> <span id="ui-situation-text">EXPLORANDO...</span>
         </div>
 
-        <h2>Turno <span id="ui-turn">1</span> / 30</h2>
+        <h2>TURNO <span id="ui-turn">1</span> / 30</h2>
         
+        <!-- Bloco de Status Retrô -->
         <div class="stats-grid">
             <div class="stat-box">
-                <span class="hero-title-area" id="ui-name">Herói</span><br>
-                <span class="class-tag" id="ui-class-tag">Classe</span>
-                <div style="margin-top:6px;">HP: <span id="txt-hp">100/100</span></div>
+                <span class="hero-title-area" id="ui-name">HERÓI</span><br>
+                <span class="class-tag" id="ui-class-tag">CLASSE</span>
+                <div style="margin-top:8px;">HP:<span id="txt-hp">100/100</span></div>
                 <div class="bar-container"><div id="bar-hp" class="bar-fill bar-hp"></div></div>
-                <div>MP: <span id="txt-mp">60/60</span></div>
+                <div>MP:<span id="txt-mp">60/60</span></div>
                 <div class="bar-container"><div id="bar-mp" class="bar-fill bar-mp"></div></div>
             </div>
-            <div class="stat-box" style="text-align: center; border-left: 1px solid #3d2b40; border-right: 1px solid #3d2b40;">
-                <strong style="color: #b2a4b7; text-transform: uppercase; font-size: 10px;">Atributos</strong><br><br>
-                <span class="large-stat-text"><i class="ra ra-flat-hammer"></i> ATK: +<span id="ui-atk">0</span></span><br><br>
-                <span class="large-stat-text"><i class="ra ra-shield"></i> DEF: +<span id="ui-def">0</span></span>
+            <div class="stat-box" style="text-align: center; border-left: 2px solid var(--gb-darkest); border-right: 2px solid var(--gb-darkest);">
+                <strong>STATUS</strong><br><br>
+                <span class="large-stat-text"><i class="ra ra-sword"></i>ATK:+<span id="ui-atk">0</span></span><br><br>
+                <span class="large-stat-text"><i class="ra ra-shield"></i>DEF:+<span id="ui-def">0</span></span>
             </div>
             <div class="stat-box" style="text-align: right;">
-                <strong style="color: #b2a4b7; text-transform: uppercase; font-size: 10px;">Inventário</strong><br><br>
-                <span class="large-stat-text" style="display:block; margin-bottom: 6px;">💰 <span id="ui-gold">40</span>g</span>
+                <strong>BOLSA</strong><br><br>
+                <span class="large-stat-text" style="display:block; margin-bottom: 8px;"><i class="ra ra-gold-bar"></i> <span id="ui-gold">40</span>G</span>
                 <div class="inventory-potions-list large-stat-text">
-                    <div>🧪 H: <span id="ui-pot-hp">1</span></div>
-                    <div><i class="ra ra-potion" style="color: #4444ff;"></i> M: <span id="ui-pot-mp">1</span></div>
+                    <div><i class="ra ra-health"></i> H: <span id="ui-pot-hp">1</span></div>
+                    <div><i class="ra ra-potion"></i> M: <span id="ui-pot-mp">1</span></div>
                 </div>
             </div>
         </div>
         
         <hr>
-        <p id="scene-description" style="font-size: 13px; line-height: 1.5; min-height: 50px;">Você pisa nos blocos frios da masmorra.</p>
+        <p id="scene-description" style="font-size: 8px; line-height: 1.8; min-height: 40px;">Você pisa nos blocos frios da masmorra.</p>
         <hr>
 
         <div id="action-panel">
+            <!-- Exploração -->
             <div id="panel-explore">
-                <p style="color:#ffcc66; font-size:12px; margin: 0 0 5px 0; text-align: center; font-weight: bold;">🔀 Escolha seu próximo passo:</p>
+                <p style="font-size:8px; margin: 0 0 5px 0; text-align: center; font-weight: bold;">ESCOLHA SEU PASSO:</p>
                 <button class="choice-btn" id="choice-1" onclick="selectPath(1)">Opção 1</button>
                 <button class="choice-btn" id="choice-2" onclick="selectPath(2)">Opção 2</button>
                 
                 <div class="explore-actions-row">
-                    <button onclick="usePotion('hp')"><i class="ra ra-health"></i> Cura</button>
-                    <button onclick="usePotion('mp')"><i class="ra ra-mana"></i> Mana</button>
-                    <button class="btn-shop-inline" onclick="openShop()"><i class="ra ra-pouch"></i> Loja</button>
+                    <button onclick="usePotion('hp')"><i class="ra ra-health icon-lg"></i> CURA</button>
+                    <button onclick="usePotion('mp')"><i class="ra ra-potion icon-lg"></i> MANA</button>
+                    <button onclick="openShop()"><i class="ra ra-pouch icon-lg"></i> LOJA</button>
                 </div>
             </div>
             
+            <!-- Combate (Oculto) -->
             <div id="panel-combat" style="display:none;">
                 <div class="combat-arena">
                     <div class="combat-row">
-                        <div>🧑 <span id="combat-hero-name" style="color:#ffcc66; font-weight:bold;">Herói</span></div>
-                        <div style="font-size: 18px; color: #ff4444;"><i id="ui-combat-icon" class="ra ra-alligator-clip"></i></div>
-                        <div><span id="enemy-name" style="font-weight:bold;">Inimigo</span></div>
+                        <div><i class="ra ra-player"></i> <span id="combat-hero-name" style="font-weight:bold;">HERÓI</span></div>
+                        <div style="font-size: 14px;"><i id="ui-combat-icon" class="ra ra-monster-skull"></i></div>
+                        <div><span id="enemy-name" style="font-weight:bold;">INIMIGO</span></div>
                     </div>
-                    <div class="combat-row" style="font-size: 11px; color: #b2a4b7; margin-top: 8px;">
-                        <div>Vida do Inimigo</div>
+                    <div class="combat-row" style="font-size: 8px; margin-top: 10px;">
+                        <div>VIDA INIMIGA</div>
                         <div>HP: <span id="txt-enemy-hp">30/30</span></div>
                     </div>
                     <div class="bar-container" style="margin: 4px 0 0 0;"><div id="bar-enemy" class="bar-fill bar-enemy"></div></div>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-                    <button class="btn-atk" onclick="combatAction('attack')">⚔️ Atk Físico</button>
-                    <button class="btn-mag" onclick="combatAction('magic')">🔥 Magia (15MP)</button>
-                    <button class="btn-flee" id="btn-flee-action" onclick="combatAction('flee')">🏃 Fugir (5)</button>
-                    <button style="background: linear-gradient(to bottom, #234728, #142d18); border-color:#366d3e;" onclick="usePotion('hp')">🧪 Usar Cura</button>
+                <div class="explore-actions-row" style="flex-wrap: wrap;">
+                    <button style="min-width: 45%;" onclick="combatAction('attack')"><i class="ra ra-crossed-swords"></i> ATACAR</button>
+                    <button style="min-width: 45%;" onclick="combatAction('magic')"><i class="ra ra-fire"></i> MAGIA(15)</button>
+                    <button style="min-width: 45%;" id="btn-flee-action" onclick="combatAction('flee')"><i class="ra ra-run"></i> FUGIR(5)</button>
+                    <button style="min-width: 45%;" onclick="usePotion('hp')"><i class="ra ra-health"></i> CURAR</button>
                 </div>
             </div>
         </div>
 
-        <div id="log">A jornada se inicia nas sombras.</div>
+        <div id="log">> A JORNADA SE INICIA NAS SOMBRAS.</div>
     </div>
 
+    <!-- TELA EXCLUSIVA DA LOJA -->
     <div id="screen-shop" class="screen game-card">
-        <h1>🏪 Mercador Itinerante</h1>
+        <h1>MERCADOR</h1>
         <hr>
         <div class="shop-header-status">
-            <div>💰 Seu Ouro: <strong id="shop-ui-gold" style="color:#ffcc66;">0g</strong></div>
-            <div>🧪 H: <strong id="shop-ui-pothp">0</strong> | <i class="ra ra-potion" style="color:#4444ff;"></i> M: <strong id="shop-ui-potmp">0</strong></div>
+            <div><i class="ra ra-gold-bar"></i> OURO: <strong id="shop-ui-gold">0G</strong></div>
+            <div><i class="ra ra-health"></i> H: <strong id="shop-ui-pothp">0</strong> | <i class="ra ra-potion"></i> M: <strong id="shop-ui-potmp">0</strong></div>
         </div>
 
         <div id="shop-catalog">
             <div class="shop-item-card">
                 <div class="shop-item-info">
-                    <strong>🧪 Poção de Cura Comum</strong>
-                    <div>Restaura +15 pontos de Vida</div>
+                    <strong>P. DE CURA</strong>
+                    <div>RESTAURA +15 HP</div>
                 </div>
-                <button onclick="buyItem('pot_hp')" style="padding: 6px 12px;">19g</button>
+                <button onclick="buyItem('pot_hp')">15G</button>
             </div>
             <div class="shop-item-card">
                 <div class="shop-item-info">
-                    <strong>🧪 Poção de Mana Comum</strong>
-                    <div>Restaura +15 pontos de Mana</div>
+                    <strong>P. DE MANA</strong>
+                    <div>RESTAURA +15 MP</div>
                 </div>
-                <button id="btn-shop-potmp" onclick="buyItem('pot_mp')" style="padding: 6px 12px;">19g</button>
+                <button id="btn-shop-potmp" onclick="buyItem('pot_mp')">15G</button>
             </div>
             <div class="shop-item-card">
                 <div class="shop-item-info">
-                    <strong>⚔️ Espada de Aço</strong>
-                    <div>1ª Compra: +2 ATK | 2ª Compra: +1 ATK</div>
+                    <strong>ESPADA AÇO</strong>
+                    <div>+2 ATK (+1 SEGUNDA)</div>
                 </div>
-                <button id="btn-shop-weapon" onclick="buyItem('weapon')">90g</button>
+                <button id="btn-shop-weapon" onclick="buyItem('weapon')">72G</button>
             </div>
             <div class="shop-item-card">
                 <div class="shop-item-info">
-                    <strong>🛡️ Armadura de Placas</strong>
-                    <div>1ª Compra: +2 DEF | 2ª Compra: +1 DEF</div>
+                    <strong>ARMADURA</strong>
+                    <div>+2 DEF (+1 SEGUNDA)</div>
                 </div>
-                <button id="btn-shop-armor" onclick="buyItem('armor')">90g</button>
+                <button id="btn-shop-armor" onclick="buyItem('armor')">72G</button>
             </div>
         </div>
 
         <hr>
-        <button onclick="sellCommonItem()" style="width:100%; background:linear-gradient(to bottom, #441a1a, #260f0f); border-color:#632828; color:#ff9999; margin-bottom: 8px;">💰 Vender Equipamento Velho (+25g)</button>
-        <button onclick="closeShop()" style="width:100%; background:linear-gradient(to bottom, #3b3b3b, #222); border-color:#555; color:#fff;"><i class="fa-solid fa-circle-arrow-left"></i> Voltar à Masmorra</button>
+        <button onclick="sellCommonItem()" style="width:100%; margin-bottom: 8px;">VENDER VELHOS (+25G)</button>
+        <button onclick="closeShop()" style="width:100%;">VOLTAR À MASMORRA</button>
     </div>
 
+    <!-- TELA FINAL -->
     <div id="screen-end" class="screen game-card" style="text-align:center;">
-        <h1 id="end-title">Fim de Jogo</h1>
+        <h1 id="end-title">FIM DE JOGO</h1>
         
         <div id="ui-death-icon-slot" class="death-icon-container" style="display:none;">
             <i class="ra ra-skull"></i>
         </div>
 
-        <p id="end-message" style="font-size: 14px; line-height: 1.5; color:#b2a4b7;"></p>
+        <p id="end-message" style="font-size: 8px; line-height: 1.8;"></p>
         
-        <div style="font-size: 14px; font-weight:bold; color:#ffcc66; text-transform:uppercase;">Rank da Aventura</div>
+        <div style="font-size: 10px; font-weight:bold; margin-top: 15px;">RANK DA AVENTURA</div>
         <div class="ranking-badge" id="ui-rank-badge">C</div>
         
-        <h3>📊 Resumo da Exploração</h3>
+        <h3>ESTATÍSTICAS</h3>
         <div class="stats-summary" id="end-stats-box"></div>
 
-        <button onclick="location.reload()" style="width: 80%;">Jogar Novamente</button>
-        <div class="credits">Criado por: wgrmoreira</div>
+        <button onclick="location.reload()" style="width: 100%;">JOGAR NOVAMENTE</button>
+        <div class="credits">CRIADO POR: WGRMOREIRA</div>
     </div>
 </div>
 
@@ -313,34 +353,34 @@
     let selectedClassSetup = "knight";
 
     const locais = [
-        "subindo uma Escadaria Espiral de pedra musgosa", "descendo por uma corda em um Buraco Escuro",
-        "atravessando um Portão de Ferro trancado", "espremendo-se por uma Fenda Estreita na parede",
-        "caminhando pelo topo de uma Ponte Quebrada sobre o abismo", "explorando o Altar Sacrificial abandonado",
-        "seguindo pelo Corredor dos Caixões Rompidos", "adentrando uma Antiga Biblioteca em ruínas",
-        "passando por um Ninho Abandonado de Harpias nas alturas", "cruzando uma ponte suspensa de cordas velhas",
-        "escondendo-se atrás de pilares de gárgulas petrificadas", "investigando um poço profundo cheio de piche seco",
-        "caminhando por canais de esgoto com lodo esverdeado", "desbravando o antigo Arsenal de Armas enferrujadas",
-        "adentrando a antiga Forja Real há séculos desativada", "explorando um claustro em ruínas tomado por raízes negras"
+        "SUBINDO ESCADAS DE PEDRA MUSGOSA", "DESCENDO POR UM BURACO ESCURO",
+        "ATRAVESSANDO UM PORTÃO DE FERRO", "ESPREMENDO-SE POR UMA FENDA",
+        "CAMINHANDO POR UMA PONTE QUEBRADA", "EXPLORANDO O ALTAR ABANDONADO",
+        "SEGUINDO PELAS CRIPTAS ROMPIDAS", "ADENTRANDO A BIBLIOTECA EM RUÍNAS",
+        "PASSANDO PELO NINHO DE HARPIAS", "CRUZANDO A PONTE DE CORDAS",
+        "ESCONDENDO-SE ATRÁS DE GÁRGULAS", "INVESTIGANDO O POÇO DE PICHE",
+        "CAMINHANDO PELOS ESGOTOS COM LODO", "DESBRAVANDO O ARSENAL ANTIGO",
+        "ADENTRANDO A FORJA DESATIVADA", "EXPLORANDO O CLAUSTRO NEGRO"
     ];
     const acoes = [
-        "para tentar investigar baús apodrecidos", "para desviar de estalagmites afiadas",
-        "para erguer sua tocha contra os morcegos", "para forçar uma passagem obstruída",
-        "para decifrar runas brilhantes entalhadas", "para pisar com cuidado contornando armadilhas",
-        "enquanto tenta dissipar uma névoa mágica densa", "enquanto recolhe cinzas quentes do chão",
-        "guiado por um rastro sutil de sangue seco", "enquanto chuta pilhas de crânios estalando sob as botas"
+        "PARA INVESTIGAR BAÚS APODRECIDOS", "PARA DESVIAR DE ESTALAGMITES",
+        "PARA ERGUER A TOCHA", "PARA FORÇAR UMA PASSAGEM",
+        "PARA DECIFRAR RUNAS BRILHANTES", "CONTORNANDO ARMADILHAS",
+        "TENTANDO DISSIPAR A NÉVOA MÁGICA", "RECOLHENDO CINZAS DO CHÃO",
+        "GUIADO POR UM RASTRO DE SANGUE", "CHUTANDO PILHAS DE CRÂNIOS"
     ];
     const perigos = [
-        "onde o ar fica pesado.", "escutando estalos vindos logo atrás.",
-        "com a nítida sensação de pisar em ossos.", "onde gotas de um líquido estranho caem do teto.",
-        "percebendo que as sombras parecem se mover.", "sentindo correntes de ar congelante nas costas.",
-        "enquanto sussurros ecoam das rachaduras das pedras.", "com um cheiro forte de enxofre impregnado."
+        "ONDE O AR FICA PESADO.", "ESCUTANDO ESTALOS LOGO ATRÁS.",
+        "PISANDO EM OSSOS FRÁGEIS.", "ONDE GOTAS ESTRANHAS CAEM.",
+        "COM SOMBRAS SE MOVENDO.", "SENTINDO CORRENTES CONGELANTES.",
+        "ENQUANTO SUSSURROS ECOAM.", "COM CHEIRO DE ENXOFRE."
     ];
 
     const achadosPaz = [
-        "Ao terminar a travessia, você encontra uma antiga urna funerária quebrada cheia de moedas esquecidas!",
-        "Chegando ao local, o ambiente se acalma. Você descobre uma pequena bolsa de moedas perdida.",
-        "A movimentação foi um sucesso! Escondido atrás de uma pilastra de pedra, havia um pote de ouro intacto.",
-        "Você alcança o objetivo em segurança. O silêncio revela alguns espólios brilhantes caídos entre as rachaduras."
+        "VOCÊ ENCONTRA UMA URNA QUEBRADA CHEIA DE MOEDAS ESQUECIDAS!",
+        "O AMBIENTE SE ACALMA. VOCÊ DESCOBRE UMA PEQUENA BOLSA PERDIDA.",
+        "MOVIMENTAÇÃO SEGURA! ESCONDIDO ATRÁS DA PILASTRA, HAVIA UM POTE DE OURO.",
+        "O SILÊNCIO REVELA ESPÓLIOS BRILHANTES CAÍDOS ENTRE AS RACHADURAS."
     ];
 
     let currentChoices = { c1: "", c2: "" };
@@ -355,14 +395,11 @@
 
     function startGame() {
         const input = document.getElementById("player-name-input").value;
-        player.name = input ? input : "Herói";
+        player.name = input ? input.toUpperCase() : "HERÓI";
         player.class = selectedClassSetup;
 
-        if(player.class === 'knight') {
-            player.baseAtk = 9;
-        } else {
-            player.baseAtk = 8;
-        }
+        if(player.class === 'knight') { player.baseAtk = 9; } 
+        else { player.baseAtk = 8; }
 
         changeScreen("screen-main");
         generateChoices();
@@ -410,10 +447,10 @@
             if(player.class === 'thief') goldFound = goldFound + Math.ceil(goldFound * 0.05);
 
             document.getElementById("scene-description").innerText = achadosPaz[Math.floor(Math.random() * achadosPaz.length)];
-            logMessage(`Área segura. Você coletou +${goldFound}g.`);
+            logMessage(`ÁREA SEGURA. COLETADO +${goldFound}G.`);
             player.gold += goldFound;
             stats.goldFoundTotal += goldFound;
-            setSituation("gold", "Ouro Encontrado!");
+            setSituation("gold", "OURO ENCONTRADO!");
             generateChoices();
         } 
         else if (roll <= 85) {
@@ -427,31 +464,31 @@
 
     function spawnEnemy(isBoss, forceDragon = false) {
         inCombat = true;
-        setSituation("fight", "Lutando Pela Vida!");
+        setSituation("fight", "LUTANDO PELA VIDA!");
 
         if (forceDragon) {
-            enemy = { name: "Dragão Ancião", hp: 99, maxHp: 99, isBoss: true, defChance: 40, icon: "ra-dragon", type: "dragon" };
-            document.getElementById("scene-description").innerText = "O teto desaba em pedaços flamejantes. O lendário Dragão Ancião (99 HP) surgiu! Não há escapatória!";
-            logMessage(`⚠️ O Dragão Ancião bloqueia sua saída!`);
+            enemy = { name: "DRAGÃO ANCIÃO", hp: 99, maxHp: 99, isBoss: true, defChance: 40, icon: "ra-dragon", type: "dragon" };
+            document.getElementById("scene-description").innerText = "O TETO DESABA EM PEDAÇOS FLAMEJANTES. O LENDÁRIO DRAGÃO ANCIÃO (99 HP) SURGIU! NÃO HÁ ESCAPATÓRIA!";
+            logMessage(`AVISO: O DRAGÃO BLOQUEIA A SAÍDA!`);
             return;
         }
 
         if (isBoss) {
-            enemy = { name: "Balrog", hp: 63, maxHp: 63, isBoss: true, defChance: 35, icon: "ra-demon", type: "balrog" };
-            document.getElementById("scene-description").innerText = "Um calor infernal toma conta do ar. Um imponente Balrog (63 HP) barra sua fuga com chicotes de fogo!";
-            logMessage(`⚠️ Um Balrog emerge do abismo!`);
+            enemy = { name: "BALROG", hp: 63, maxHp: 63, isBoss: true, defChance: 35, icon: "ra-demon", type: "balrog" };
+            document.getElementById("scene-description").innerText = "UM CALOR INFERNAL TOMA CONTA. UM IMPONENTE BALROG (63 HP) BARRA SUA FUGA COM CHICOTES DE FOGO!";
+            logMessage(`AVISO: UM BALROG EMERGE!`);
         } else {
             const pool = [
-                { name: "Goblin", hp: 25, icon: "ra-goblin" },
-                { name: "Aranha Gigante", hp: 25, icon: "ra-spider-face" },
-                { name: "Esqueleto", hp: 31, icon: "ra-skeleton" },
-                { name: "Orc Profanador", hp: 38, icon: "ra-orc-head" },
-                { name: "Troll de Caverna", hp: 44, icon: "ra-troll" }
+                { name: "GOBLIN", hp: 25, icon: "ra-goblin" },
+                { name: "ARANHA", hp: 25, icon: "ra-spider-face" },
+                { name: "ESQUELETO", hp: 31, icon: "ra-skeleton" },
+                { name: "ORC", hp: 38, icon: "ra-orc-head" },
+                { name: "TROLL", hp: 44, icon: "ra-troll" }
             ];
             let picked = pool[Math.floor(Math.random() * pool.length)];
             enemy = { name: picked.name, hp: picked.hp, maxHp: picked.hp, isBoss: false, defChance: 20, icon: picked.icon, type: "common" };
-            document.getElementById("scene-description").innerText = `Um rosnado feroz corta o silêncio. Um ${picked.name} surgiu para bloquear seus passos!`;
-            logMessage(`⚔️ Combate iniciado contra ${picked.name}.`);
+            document.getElementById("scene-description").innerText = `UM ROSNADO FEROZ CORTA O SILÊNCIO. UM ${picked.name} SURGIU PARA BLOQUEAR SEUS PASSOS!`;
+            logMessage(`COMBATE INICIADO: ${picked.name}.`);
         }
     }
 
@@ -460,44 +497,44 @@
 
         if (type === 'flee') {
             if (enemy.isBoss) {
-                logMessage("Impossível fugir de inimigos Chefes!");
+                logMessage("IMPOSSÍVEL FUGIR DE CHEFES!");
                 return;
             }
             if (player.fleeLeft <= 0) {
-                logMessage("Você não tem mais energia para tentar fugir nesta masmorra!");
+                logMessage("FUGAS ESGOTADAS!");
                 return;
             }
             
             player.fleeLeft--;
             stats.fleeAttempts++;
             if (Math.random() >= 0.50) {
-                logMessage("🏃 Sucesso! Você conseguiu escapar batendo em retirada.");
+                logMessage("SUCESSO! VOCÊ ESCAPOU BATENDO EM RETIRADA.");
                 inCombat = false; enemy = null;
-                document.getElementById("scene-description").innerText = "Você correu ofegante de volta para os cruzamentos seguros.";
-                setSituation("explore", "Explorando os Corredores...");
+                document.getElementById("scene-description").innerText = "VOCÊ CORREU OFEGANTE DE VOLTA PARA OS CRUZAMENTOS SEGUROS.";
+                setSituation("explore", "EXPLORANDO...");
                 generateChoices(); updateUI(); return;
             } else {
-                player.hp -= 3; logMessage("💥 Falha ao fugir! Levou 3 de dano direto nas costas.");
+                player.hp -= 3; logMessage("FALHA AO FUGIR! TOMOU 3 DE DANO NAS COSTAS.");
                 if (checkGameOver()) return; 
             }
         }
 
         if (type === 'attack') {
-            if (Math.random() > 0.85) { logMessage("Você errou o golpe!"); } 
+            if (Math.random() > 0.85) { logMessage("VOCÊ ERROU O GOLPE!"); } 
             else {
                 let damage = player.baseAtk;
                 if (Math.random() * 100 < enemy.defChance) {
                     let mitigation = enemy.isBoss ? 4 : 2;
                     damage = Math.max(1, damage - mitigation);
-                    logMessage(`O inimigo aparou o impacto! Sofreu ${damage} de dano.`);
-                } else { logMessage(`Ataque certeiro! Causou ${damage} de dano.`); }
+                    logMessage(`INIMIGO MITIGOU O IMPACTO! SOFREU ${damage} DANO.`);
+                } else { logMessage(`ATAQUE CERTEIRO! CAUSOU ${damage} DANO.`); }
                 enemy.hp -= damage;
             }
         } 
         else if (type === 'magic') {
-            if (player.mp < 15) { logMessage("Mana insuficiente!"); return; }
+            if (player.mp < 15) { logMessage("MANA INSUFICIENTE!"); return; }
             player.mp -= 15; enemy.hp -= 18;
-            logMessage(`🔥 Bola de Fogo explode causando 18 de dano bruto.`);
+            logMessage(`BOLA DE FOGO EXPLODE CAUSANDO 18 DE DANO.`);
         }
 
         if (enemy.hp <= 0) {
@@ -505,21 +542,21 @@
             if (enemy.type === "dragon") {
                 stats.bossKills++;
                 goldGained = Math.round((Math.floor(Math.random() * 15) + 45) * 1.20);
-                document.getElementById("scene-description").innerText = "🏆 VITÓRIA LENDÁRIA! 🏆\nO Dragão Ancião cai fazendo as estruturas ruírem. Você completou o feito impossível!";
+                document.getElementById("scene-description").innerText = "VITÓRIA LENDÁRIA!\nO DRAGÃO ANCIÃO CAI. VOCÊ COMPLETOU O FEITO IMPOSSÍVEL!";
             } else if (enemy.type === "balrog") {
                 stats.bossKills++;
                 goldGained = Math.round((Math.floor(Math.random() * 15) + 45) * 1.15);
-                document.getElementById("scene-description").innerText = "🔥 VITÓRIA ÉPICA! 🔥\nO demônio de cinzas desmorona. As chamas da sala finalmente se apagam.";
+                document.getElementById("scene-description").innerText = "VITÓRIA ÉPICA!\nO DEMÔNIO DE CINZAS DESMORONA. AS CHAMAS SE APAGAM.";
             } else {
                 stats.normalKills++;
                 goldGained = Math.floor(Math.random() * 10) + 15;
-                document.getElementById("scene-description").innerText = "⚔️ VITÓRIA! ⚔️\nO inimigo foi subjugado e o caminho está limpo novamente.";
+                document.getElementById("scene-description").innerText = "VITÓRIA!\nO INIMIGO FOI SUBJUGADO E O CAMINHO ESTÁ LIMPO.";
             }
 
             player.gold += goldGained;
-            logMessage(`☠️ ${enemy.name} destruído! +${goldGained}g obtidos.`);
+            logMessage(`${enemy.name} DESTRUÍDO! +${goldGained}G.`);
             inCombat = false; enemy = null;
-            setSituation("explore", "Explorando os Corredores...");
+            setSituation("explore", "EXPLORANDO...");
             generateChoices(); updateUI();
             if(turn >= 30) endGame(true);
             return;
@@ -527,31 +564,32 @@
 
         // Ataque do inimigo
         if (Math.random() > 0.85) { 
-            logMessage(`O inimigo falhou no contra-ataque.`); 
+            logMessage(`O INIMIGO FALHOU NO CONTRA-ATAQUE.`); 
         } else {
             let enemyDmg = enemy.isBoss ? (Math.floor(Math.random() * 6) + 12) : (Math.floor(Math.random() * 4) + 6);
             let finalDmg = Math.max(1, enemyDmg - player.baseDef);
             player.hp -= finalDmg;
-            logMessage(`${enemy.name} atacou: causou ${finalDmg} de dano.`);
+            logMessage(`${enemy.name} ATACOU: CAUSOU ${finalDmg} DANO.`);
         }
         
-        // Verifica a morte IMEDIATAMENTE após receber dano
+        // Verifica a morte imediatamente
         if (checkGameOver()) return; 
         updateUI();
     }
 
-    // DISJUNTOR DA MORTE ABSOLUTA
+    // DISJUNTOR DE MORTE: INTERROMPE TUDO
     function checkGameOver() {
         if (player.hp <= 0) { 
             player.hp = 0; 
             inCombat = false; 
             enemy = null;     
             
-            // Oculta os painéis de interação instantaneamente
+            document.getElementById("txt-hp").innerText = "0/100";
+            document.getElementById("bar-hp").style.width = "0%";
+            
             document.getElementById("panel-explore").style.display = "none";
             document.getElementById("panel-combat").style.display = "none";
             
-            // Transição direta para a tela final sem exceções
             endGame(false); 
             return true; 
         }
@@ -563,27 +601,27 @@
         if (type === 'hp') {
             if (player.potHp > 0) {
                 player.hp = Math.min(player.maxHp, player.hp + 15); player.potHp--; stats.potionsUsed++;
-                logMessage("Bebeu Poção de Cura. +15 HP.");
-            } else { logMessage("Sem poções de vida!"); }
+                logMessage("BEBEU CURA. +15 HP.");
+            } else { logMessage("SEM POÇÕES DE VIDA!"); }
         } else if (type === 'mp') {
             if (player.potMp > 0) {
                 player.mp = Math.min(player.maxMp, player.mp + 15); player.potMp--; stats.potionsUsed++;
-                logMessage("Bebeu Poção de Mana. +15 MP.");
-            } else { logMessage("Sem poções de mana!"); }
+                logMessage("BEBEU MANA. +15 MP.");
+            } else { logMessage("SEM POÇÕES DE MANA!"); }
         }
         updateUI();
     }
 
     function openShop() {
         if (inCombat || player.hp <= 0) return;
-        document.getElementById("shop-ui-gold").innerText = `${player.gold}g`;
+        document.getElementById("shop-ui-gold").innerText = `${player.gold}G`;
         document.getElementById("shop-ui-pothp").innerText = player.potHp;
         document.getElementById("shop-ui-potmp").innerText = player.potMp;
         
-        let potMpPrice = player.class === 'mage' ? 10 : 19;
-        document.getElementById("btn-shop-potmp").innerText = `${potMpPrice}g`;
-        document.getElementById("btn-shop-armor").innerText = player.armorBought === 0 ? "90g" : "120g";
-        document.getElementById("btn-shop-weapon").innerText = player.weaponBought === 0 ? "90g" : "120g";
+        let potMpPrice = player.class === 'mage' ? 8 : 15;
+        document.getElementById("btn-shop-potmp").innerText = `${potMpPrice}G`;
+        document.getElementById("btn-shop-armor").innerText = player.armorBought === 0 ? "72G" : "96G";
+        document.getElementById("btn-shop-weapon").innerText = player.weaponBought === 0 ? "72G" : "96G";
 
         if(player.armorBought >= 2) document.getElementById("btn-shop-armor").disabled = true;
         if(player.weaponBought >= 2) document.getElementById("btn-shop-weapon").disabled = true;
@@ -595,20 +633,20 @@
 
     function buyItem(itemType) {
         if (player.hp <= 0) return;
-        if (itemType === 'pot_hp' && player.gold >= 19) {
-            player.gold -= 19; stats.goldSpent += 19; player.potHp++;
+        if (itemType === 'pot_hp' && player.gold >= 15) {
+            player.gold -= 15; stats.goldSpent += 15; player.potHp++;
         } else if (itemType === 'pot_mp') {
-            let price = player.class === 'mage' ? 10 : 19;
+            let price = player.class === 'mage' ? 8 : 15;
             if(player.gold >= price) { player.gold -= price; stats.goldSpent += price; player.potMp++; }
         } else if (itemType === 'armor') {
-            let price = player.armorBought === 0 ? 90 : 120;
+            let price = player.armorBought === 0 ? 72 : 96;
             if(player.gold >= price && player.armorBought < 2) {
                 player.gold -= price; stats.goldSpent += price; player.armorBought++;
                 player.baseDef = player.armorBought === 1 ? 2 : 3;
                 player.commonItemsCount++;
             }
         } else if (itemType === 'weapon') {
-            let price = player.weaponBought === 0 ? 90 : 120;
+            let price = player.weaponBought === 0 ? 72 : 96;
             if(player.gold >= price && player.weaponBought < 2) {
                 player.gold -= price; stats.goldSpent += price; player.weaponBought++;
                 player.baseAtk += player.weaponBought === 1 ? 2 : 1;
@@ -632,19 +670,19 @@
     function setSituation(type, text) {
         const bar = document.getElementById("ui-situation-bar");
         let iconHtml = "";
-        if(type === "explore") iconHtml = `<i class="fa-solid fa-compass"></i>`;
-        if(type === "gold") iconHtml = `<i class="fa-solid fa-coins" style="color:#ffd700;"></i>`;
-        if(type === "fight") iconHtml = `<i class="ra ra-crossed-swords" style="color:#ff4444;"></i>`;
+        if(type === "explore") iconHtml = `<i class="ra ra-compass"></i>`;
+        if(type === "gold") iconHtml = `<i class="ra ra-gold-bar"></i>`;
+        if(type === "fight") iconHtml = `<i class="ra ra-crossed-swords"></i>`;
         bar.innerHTML = `${iconHtml} <span>${text}</span>`;
     }
 
     function updateUI() {
-        if (player.hp <= 0) return; // Trava a atualização normal se a tela final já foi chamada
+        if (player.hp <= 0) return; // Segurança Absoluta
 
         document.getElementById("ui-turn").innerText = turn;
         document.getElementById("ui-name").innerText = player.name;
         
-        let classNames = { knight: "Cavaleiro ⚔️", mage: "Mago 🔮", thief: "Ladrão 🪙" };
+        let classNames = { knight: "CAVALEIRO", mage: "MAGO", thief: "LADRÃO" };
         document.getElementById("ui-class-tag").innerText = classNames[player.class];
 
         document.getElementById("ui-atk").innerText = player.class === 'knight' ? (player.baseAtk - 8) : (player.baseAtk - 8);
@@ -672,9 +710,9 @@
 
             const btnFlee = document.getElementById("btn-flee-action");
             if(enemy.isBoss) {
-                btnFlee.innerText = "🏃 Bloqueado"; btnFlee.disabled = true;
+                btnFlee.innerHTML = "<i class='ra ra-cancel'></i> BLOQUEADO"; btnFlee.disabled = true;
             } else {
-                btnFlee.innerText = `🏃 Fugir (${player.fleeLeft})`;
+                btnFlee.innerHTML = `<i class='ra ra-run'></i> FUGIR(${player.fleeLeft})`;
                 btnFlee.disabled = player.fleeLeft <= 0;
             }
         } else {
@@ -688,12 +726,12 @@
         const deathIconSlot = document.getElementById("ui-death-icon-slot");
 
         if (victory) {
-            document.getElementById("end-title").innerText = "🎉 VITÓRIA! 🎉";
-            document.getElementById("end-message").innerText = `Incrível! ${player.name} completou os 30 turnos e escapou com vida da masmorra do RPG Pocket v1.1!`;
+            document.getElementById("end-title").innerText = "VITÓRIA!";
+            document.getElementById("end-message").innerText = `INCRÍVEL! ${player.name} ESCAPOU COM VIDA DA MASMORRA!`;
             deathIconSlot.style.display = "none";
         } else {
-            document.getElementById("end-title").innerText = "💀 GAME OVER 💀";
-            document.getElementById("end-message").innerHTML = `<strong>O herói ${player.name} caiu bravamente em combate no turno ${turn}!</strong><br>A masmorra coletou seus vestígios.`;
+            document.getElementById("end-title").innerText = "GAME OVER";
+            document.getElementById("end-message").innerHTML = `O HERÓI ${player.name} CAIU EM COMBATE NO TURNO ${turn}!`;
             deathIconSlot.style.display = "block";
         }
 
@@ -704,22 +742,22 @@
         score -= stats.potionsUsed * 10; 
 
         let rank = "C";
-        if (score >= 800) rank = "A+";
+        if (score >= 800) rank = "S";
         else if (score >= 650) rank = "A";
-        else if (score >= 500) rank = "B+";
-        else if (score >= 380) rank = "B";
-        else if (score >= 250) rank = "C+";
+        else if (score >= 500) rank = "B";
+        else if (score >= 380) rank = "C";
+        else rank = "D";
 
         document.getElementById("ui-rank-badge").innerText = rank;
 
         const statsBox = document.getElementById("end-stats-box");
         statsBox.innerHTML = `
-            <div><strong>Ouro guardado final:</strong> <span>${player.gold}g</span></div>
-            <div><strong>Ouro total descoberto:</strong> <span>${stats.goldFoundTotal}g</span></div>
-            <div><strong>Poções utilizadas totais:</strong> <span>${stats.potionsUsed}</span></div>
-            <div><strong>Monstros comuns abatidos:</strong> <span>${stats.normalKills}</span></div>
-            <div><strong>Chefes lendários destruídos:</strong> <span>${stats.bossKills}</span></div>
-            <div><strong>Pontuação da sua Build:</strong> <span>${Math.max(0, score)} pts</span></div>
+            <div><strong>OURO GUARDADO:</strong> <span>${player.gold}G</span></div>
+            <div><strong>OURO DESCOBERTO:</strong> <span>${stats.goldFoundTotal}G</span></div>
+            <div><strong>POÇÕES USADAS:</strong> <span>${stats.potionsUsed}</span></div>
+            <div><strong>MONSTROS MORTOS:</strong> <span>${stats.normalKills}</span></div>
+            <div><strong>CHEFES MORTOS:</strong> <span>${stats.bossKills}</span></div>
+            <div><strong>PONTUAÇÃO:</strong> <span>${Math.max(0, score)} PTS</span></div>
         `;
     }
 </script>
