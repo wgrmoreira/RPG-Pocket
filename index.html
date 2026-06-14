@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPG Pocket v1.2 - 16-Bits Monster Update</title>
+    <title>RPG Pocket v1.2 - Monster HP Buff Update</title>
     <!-- Bibliotecas de Ícones Gratuitas (Font Awesome & RPG Awesome) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rpg-awesome/0.2.0/css/rpg-awesome.min.css">
@@ -72,7 +72,7 @@
             line-height: 1.8;
         }
 
-        /* AJUSTADO: Tela Sobreposta Menor e Centralizada (Estilo Pop-up Elegante) */
+        /* Tela Sobreposta Menor e Centralizada */
         #enemy-encounter-overlay {
             position: absolute;
             top: 10%; left: 5%; width: 90%; height: 80%;
@@ -286,11 +286,11 @@
         </div>
     </div>
 
-    <!-- PAINEL SOBREPOSTO DE ENCONTRO COM INIMIGO (AJUSTADO: MENOR) -->
+    <!-- PAINEL SOBREPOSTO DE ENCONTRO COM INIMIGO -->
     <div id="enemy-encounter-overlay">
         <div style="text-align: center; margin-top: 5px;">
             <div class="encounter-title" id="enc-enemy-name">TROLL</div>
-            <div class="encounter-hp">HP: <span id="enc-enemy-hp">44/44</span></div>
+            <div class="encounter-hp">HP: <span id="enc-enemy-hp">48/48</span></div>
         </div>
         <div class="art-container-8bit" id="enc-enemy-art">
             <!-- Renderizado dinamicamente via JS em 16-bits -->
@@ -347,7 +347,7 @@
                     <path fill="currentColor" d="M6,2 h4 v1 h2 v4 h-1 v2 h-6 v-2 h-1 v-4 h2 v-1 z M5,5 h6 v1 h-6 z M4,9 h8 v6 h-8 z M13,3 h1 v8 h-1 z M12,9 h3 v1 h-3 z" fill-rule="evenodd"/>
                 </svg>
                 <div class="class-details">
-                    <strong>CAVALEIRO</strong><br>Força bruta.<br>Ataque +1
+                    <strong>CAVALEIRO</strong><br>Força bruta.<br>Ataque +1 | Defesa +1
                 </div>
             </div>
             <div class="class-option" id="opt-mage" onclick="selectClass('mage')">
@@ -355,7 +355,7 @@
                     <path fill="currentColor" d="M7,1 h2 v2 h2 v2 h2 v1 h-10 v-1 h2 v-2 h2 v-2 z M6,6 h4 v3 h-4 z M4,9 h8 v6 h-8 z M13,2 h1 v12 h-1 z M12,4 h3 v1 h-3 z"/>
                 </svg>
                 <div class="class-details">
-                    <strong>MAGO</strong><br>Alquimista.<br>Mana por 12g
+                    <strong>MAGO</strong><br>Alquimista.<br>Mana por 12g | Defesa +1
                 </div>
             </div>
             <div class="class-option" id="opt-thief" onclick="selectClass('thief')">
@@ -363,7 +363,7 @@
                     <path fill="currentColor" d="M5,3 h6 v4 h-1 v1 h-4 v-1 h-1 v-4 z M6,5 h1 v1 h-1 z M9,5 h1 v1 h-1 z M4,8 h8 v7 h-8 z M12,9 h1 v4 h-1 z M11,10 h3 v1 h-3 z" fill-rule="evenodd"/>
                 </svg>
                 <div class="class-details">
-                    <strong>LADRÃO</strong><br>Sortudo.<br>+8% de ouro
+                    <strong>LADRÃO</strong><br>Sortudo.<br>+8% ouro | Defesa +1
                 </div>
             </div>
         </div>
@@ -647,100 +647,74 @@
     }
 
     // ==========================================
-    // BANCO DE REPRODUÇÃO EM 16-BITS (VETORIAL DETALHADO)
+    // BANCO DE REPRODUÇÃO EM 16-BITS
     // ==========================================
     const monsterGraphics = {
         "TROLL": `<svg viewBox="0 0 64 64" width="160" height="160">
-            <!-- Fundo Caverna sutil -->
             <path fill="#306230" opacity="0.3" d="M10,10 h44 v44 h-44 z"/>
-            <!-- Silhueta da Caverna e Rochas -->
             <path fill="#0f380f" d="M0,0 v64 h64 v-64 z M54,54 H10 V10 h44 z M12,12 h6 v4 h-6 z M44,14 h8 v8 h-8 z"/>
-            <!-- O Troll (Baseado em image_383f83.jpg) -->
-            <!-- Corpo e Pernas -->
             <path fill="#0f380f" d="M22,24 h20 v24 h-20 z M18,44 h8 v12 h-8 z M38,44 h8 v12 h-8 z"/>
             <path fill="#306230" d="M24,26 h16 v20 h-16 z M20,46 h4 v8 h-4 z M40,46 h4 v8 h-4 z"/>
-            <!-- Braços e Mãos -->
             <path fill="#0f380f" d="M14,28 h8 v14 h-8 z M42,28 h8 v12 h-8 z"/>
             <path fill="#306230" d="M16,30 h4 v10 h-4 z M44,30 h4 v8 h-4 z"/>
-            <!-- Cabeça, Orelhas Pontudas e Feições -->
             <path fill="#0f380f" d="M24,12 h16 v14 h-16 z M20,16 h4 v4 h-4 z M40,16 h4 v4 h-4 z"/>
             <path fill="#306230" d="M26,14 h12 v10 h-12 z M22,17 h2 v2 h-2 z M40,17 h2 v2 h-2 z"/>
             <path fill="#8bac0f" d="M28,17 h2 v2 h-2 z M34,17 h2 v2 h-2 z M27,21 h10 v2 h-10 z"/> 
-            <path fill="#9bbc0f" d="M26,22 h2 v2 h-2 z M36,22 h2 v2 h-2 z"/> <!-- Presas proeminentes -->
-            <!-- O Porrete Gigante Espinhoso -->
+            <path fill="#9bbc0f" d="M26,22 h2 v2 h-2 z M36,22 h2 v2 h-2 z"/> 
             <path fill="#0f380f" d="M46,22 h10 v18 h-10 z M48,20 h6 v2 h-6 z M48,40 h4 v4 h-4 z"/>
             <path fill="#306230" d="M48,24 h6 v14 h-6 z"/>
             <path fill="#8bac0f" d="M46,26 h2 v2 h-2 z M54,30 h2 v2 h-2 z M50,34 h2 v2 h-2 z"/>
         </svg>`,
         "GOBLIN": `<svg viewBox="0 0 64 64" width="160" height="160">
-            <!-- Corpo e Capa -->
             <path fill="#0f380f" d="M24,28 h16 v24 h-16 z M16,32 h8 v10 h-8 z M40,32 h8 v10 h-8 z"/>
             <path fill="#306230" d="M26,30 h12 v20 h-12 z M18,34 h4 v6 h-4 z M42,34 h4 v6 h-4 z"/>
-            <!-- Cabeça e Orelhas Gigantes Horizontais -->
             <path fill="#0f380f" d="M26,16 h12 v14 h-16 z M12,20 h14 v4 h-14 z M38,20 h14 v4 h-14 z"/>
             <path fill="#306230" d="M28,18 h8 v10 h-8 z M14,21 h12 v2 h-14 z M38,21 h12 v2 h-14 z"/>
-            <!-- Rosto Alquimista/Malicioso -->
             <path fill="#8bac0f" d="M29,21 h2 v2 h-2 z M33,21 h2 v2 h-2 z M30,25 h4 v2 h-4 z"/>
             <path fill="#9bbc0f" d="M27,24 h10 v1 h-10 z"/>
         </svg>`,
         "ARANHA": `<svg viewBox="0 0 64 64" width="160" height="160">
-            <!-- Teia de Fundo -->
             <path fill="#306230" opacity="0.2" d="M0,0 L64,64 M64,0 L0,64 M0,32 h64 M32,0 v64"/>
-            <!-- Abdômen e Cefalotórax Sombreados -->
             <path fill="#0f380f" d="M20,12 h24 v20 h-24 z M24,32 h16 v14 h-16 z"/>
             <path fill="#306230" d="M22,14 h20 v16 h-20 z M26,34 h12 v10 h-12 z"/>
             <path fill="#8bac0f" d="M26,18 h12 v4 h-12 z M28,26 h8 v2 h-8 z"/>
-            <!-- Múltiplas Patas Articuladas de 16-bits -->
             <path fill="#0f380f" d="M6,16 h14 v4 h-14 z M44,16 h14 v4 h-14 z M4,26 h16 v4 h-16 z M44,26 h16 v4 h-14 z M4,36 h16 v4 h-16 z M44,36 h16 v4 h-14 z M8,46 h14 v4 h-14 z M42,46 h14 v4 h-14 z"/>
             <path fill="#306230" d="M2,20 v10 h2 v-10 z M60,20 v10 h2 v-10 z M2,30 v10 h2 v-10 z M60,30 v10 h2 v-10 z"/>
-            <!-- Olhos Brilhantes -->
             <path fill="#9bbc0f" d="M28,42 h2 v2 h-2 z M32,42 h2 v2 h-2 z M26,44 h2 v1 h-2 z M34,44 h2 v1 h-2 z"/>
         </svg>`,
         "ESQUELETO": `<svg viewBox="0 0 64 64" width="160" height="160">
-            <!-- Crânio Anatômico com Sombras -->
             <path fill="#0f380f" d="M22,10 h20 v16 h-20 z M26,26 h12 v4 h-12 z"/>
             <path fill="#8bac0f" d="M24,12 h16 v12 h-16 z M28,24 h8 v4 h-8 z"/>
             <path fill="#306230" d="M27,16 h3 v3 h-3 z M34,16 h3 v3 h-3 z M31,21 h2 v2 h-2 z"/>
-            <!-- Caixa Torácica e Costelas Detalhadas -->
             <path fill="#0f380f" d="M30,30 h4 v22 h-4 z M20,34 h24 v4 h-24 z M20,40 h24 v4 h-24 z M22,46 h20 v4 h-20 z"/>
             <path fill="#8bac0f" d="M31,31 h2 v20 h-2 z M22,35 h20 v2 h-20 z M22,41 h20 v2 h-20 z M24,47 h16 v2 h-16 z"/>
-            <!-- Braços de Ossos com Escudo Ruinoso -->
             <path fill="#0f380f" d="M12,34 h8 v14 h-8 z M44,34 h8 v14 h-8 z"/>
-            <path fill="#306230" d="M8,40 h10 v12 h-10 z"/> <!-- Escudo quebrado -->
+            <path fill="#306230" d="M8,40 h10 v12 h-10 z"/>
         </svg>`,
         "ORC": `<svg viewBox="0 0 64 64" width="160" height="160">
-            <!-- Ombreiras de Aço e Armadura -->
             <path fill="#0f380f" d="M12,32 h40 v24 h-40 z M10,26 h10 v8 h-10 z M44,26 h10 v8 h-10 z"/>
             <path fill="#306230" d="M14,34 h36 v20 h-36 z M12,28 h6 v4 h-6 z M46,28 h6 v4 h-6 z"/>
             <path fill="#8bac0f" d="M24,40 h16 v8 h-16 z"/>
-            <!-- Cabeça Brutal e Expressão de Ira -->
             <path fill="#0f380f" d="M20,10 h24 v18 h-24 z M16,12 h4 v6 h-4 z M44,12 h4 v6 h-4 z"/>
             <path fill="#306230" d="M22,12 h20 v14 h-20 z"/>
             <path fill="#8bac0f" d="M25,16 h3 v2 h-3 z M36,16 h3 v2 h-3 z M24,22 h16 v2 h-16 z"/>
-            <!-- Presas de 16-bits Saindo do Labio Inferior -->
             <path fill="#9bbc0f" d="M23,20 h3 v4 h-3 z M38,20 h3 v4 h-3 z"/>
         </svg>`,
         "BALROG": `<svg viewBox="0 0 64 64" width="160" height="160">
-            <!-- Asas de Chamas Escuras -->
             <path fill="#0f380f" d="M4,16 C4,4 20,8 24,18 C24,8 40,4 60,16 C50,36 40,42 40,52 C40,42 14,36 4,16 Z"/>
             <path fill="#306230" opacity="0.6" d="M10,20 C10,10 22,14 24,20 C26,14 38,10 54,20 C46,34 38,38 38,46 Z"/>
-            <!-- Corpo e Chifres Curvados -->
             <path fill="#0f380f" d="M22,20 h20 v28 h-20 z M14,10 h10 v6 h-10 z M40,10 h10 v6 h-10 z M12,14 v8 h4 v-8 z M48,14 v8 h4 v-8 z"/>
             <path fill="#306230" d="M24,22 h16 v24 h-16 z M16,12 h6 v4 h-6 z M42,12 h6 v4 h-6 z"/>
-            <!-- Olhos de Fogo e Boca de Enxofre -->
             <path fill="#9bbc0f" d="M27,26 h3 v3 h-3 z M34,26 h3 v3 h-3 z"/>
             <path fill="#8bac0f" d="M26,33 h12 v4 h-12 z M28,34 h8 v1 h-8 z"/>
         </svg>`,
         "DRAGÃO ANCIÃO": `<svg viewBox="0 0 64 64" width="160" height="160">
-            <!-- Asas e Escamas de Fundo -->
             <path fill="#0f380f" d="M6,12 h12 v30 h-12 z M46,12 h12 v30 h-12 z M14,24 h36 v26 h-36 z"/>
             <path fill="#306230" d="M16,26 h32 v22 h-32 z"/>
-            <!-- Pescoço e Cabeça Majestosa Corpulenta -->
             <path fill="#0f380f" d="M20,14 h24 v16 h-24 z M24,6 h16 v8 h-16 z M16,8 h8 v4 h-8 z M40,8 h8 v4 h-8 z"/>
             <path fill="#306230" d="M22,16 h20 v12 h-20 z M26,8 h12 v6 h-12 z"/>
-            <!-- Olhos Ancestrais e Placas de Chifres -->
             <path fill="#8bac0f" d="M25,18 h3 v3 h-3 z M36,18 h3 v3 h-3 z M18,10 h4 v1 h-4 z M42,10 h4 v1 h-4 z"/>
-            <path fill="#9bbc0f" d="M22,23 h20 v3 h-20 z M20,25 h4 v4 h-4 z M40,25 h4 v4 h-4 z"/> <!-- Mandíbula de Fogo -->
+            <path fill="#9bbc0f" d="M22,23 h20 v3 h-20 z M20,25 h4 v4 h-4 z M40,25 h4 v4 h-4 z"/>
         </svg>`
     };
 
@@ -812,8 +786,16 @@
         player.name = input ? input.toUpperCase() : "HERÓI";
         player.class = selectedClassSetup;
 
-        if(player.class === 'knight') { player.baseAtk = 9; } 
-        else { player.baseAtk = 8; }
+        if(player.class === 'knight') { 
+            player.baseAtk = 9; 
+            player.baseDef = 1; 
+        } else if (player.class === 'mage') {
+            player.baseAtk = 8;
+            player.baseDef = 1; 
+        } else if (player.class === 'thief') {
+            player.baseAtk = 8;
+            player.baseDef = 1; 
+        }
 
         changeScreen("screen-main");
         stopBGM(); 
@@ -884,7 +866,8 @@
         setSituation("fight", "LUTANDO PELA VIDA!");
 
         if (forceDragon) {
-            enemy = { name: "DRAGÃO ANCIÃO", hp: 80, maxHp: 80, isBoss: true, defChance: 40, icon: "ra-dragon", type: "dragon" };
+            // AJUSTADO: HP do Dragão Ancião aumentado em 10% (De 80 para 88)
+            enemy = { name: "DRAGÃO ANCIÃO", hp: 88, maxHp: 88, isBoss: true, defChance: 40, icon: "ra-dragon", type: "dragon" };
             document.getElementById("scene-description").innerText = `O TETO DESABA EM PEDAÇOS FLAMEJANTES. O LENDÁRIO DRAGÃO ANCIÃO (${enemy.hp} HP) SURGIU! NÃO HÁ ESCAPATÓRIA!`;
             logMessage(`AVISO: O DRAGÃO BLOQUEIA A SAÍDA!`);
             triggerEnemyOverlay();
@@ -893,7 +876,8 @@
 
         if (isBoss) {
             if (turn >= 10) {
-                enemy = { name: "BALROG", hp: 56, maxHp: 56, isBoss: true, defChance: 35, icon: "ra-demon", type: "balrog" };
+                // AJUSTADO: HP do Balrog aumentado em 10% (De 56 para 62)
+                enemy = { name: "BALROG", hp: 62, maxHp: 62, isBoss: true, defChance: 35, icon: "ra-demon", type: "balrog" };
                 document.getElementById("scene-description").innerText = `UM CALOR INFERNAL TOMA CONTA. UM IMPONENTE BALROG (${enemy.hp} HP) BARRA SUA FUGA COM CHICOTES DE FOGO!`;
                 logMessage(`AVISO: UM BALROG EMERGE!`);
             } else {
@@ -906,12 +890,13 @@
     }
 
     function createCommonEnemy() {
+        // AJUSTADO: HP de TODOS os inimigos comuns aumentado em 10% (Arredondado matematicamente)
         const pool = [
-            { name: "GOBLIN", hp: 25, icon: "ra-goblin" },
-            { name: "ARANHA", hp: 25, icon: "ra-spider-face" },
-            { name: "ESQUELETO", hp: 31, icon: "ra-skeleton" },
-            { name: "ORC", hp: 38, icon: "ra-orc-head" },
-            { name: "TROLL", hp: 44, icon: "ra-troll" }
+            { name: "GOBLIN", hp: 28, icon: "ra-goblin" },        // De 25 para 28
+            { name: "ARANHA", hp: 28, icon: "ra-spider-face" },   // De 25 para 28
+            { name: "ESQUELETO", hp: 34, icon: "ra-skeleton" },   // De 31 para 34
+            { name: "ORC", hp: 42, icon: "ra-orc-head" },         // De 38 para 42
+            { name: "TROLL", hp: 48, icon: "ra-troll" }           // De 44 para 48
         ];
         let picked = pool[Math.floor(Math.random() * pool.length)];
         enemy = { name: picked.name, hp: picked.hp, maxHp: picked.hp, isBoss: false, defChance: 20, icon: picked.icon, type: "common" };
@@ -1089,7 +1074,7 @@
             let price = player.armorBought === 0 ? 79 : 106;
             if(player.gold >= price && player.armorBought < 2) {
                 player.gold -= price; stats.goldSpent += price; player.armorBought++;
-                player.baseDef = player.armorBought === 1 ? 2 : 3;
+                player.baseDef += player.armorBought === 1 ? 2 : 1;
                 player.commonItemsCount++;
             }
         } else if (itemType === 'weapon') {
@@ -1108,7 +1093,7 @@
             player.commonItemsCount--; player.gold += 25;
             if (player.armorBought > 0) {
                 player.armorBought--;
-                player.baseDef = player.armorBought === 0 ? 0 : 2;
+                player.baseDef -= player.armorBought === 0 ? 2 : 1;
             }
         }
         openShop();
